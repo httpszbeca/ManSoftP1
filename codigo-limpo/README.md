@@ -1,69 +1,74 @@
-# Sistema de Pedidos (versão "legada")
-
-Sistema simples de gerenciamento de pedidos, com back-end em Node.js/Express
-e front-end em HTML/CSS/JS puro, criado propositalmente com problemas de
-manutenibilidade comuns em código legado — ideal para praticar refatoração
-em disciplinas de manutenção de software.
+# Sistema de Pedidos — Versão Limpa
 
 ## Estrutura
 
 ```
 sistema-pedidos/
 ├── backend/
-│   ├── server.js       # API REST (Express), dados em memória
+│   ├── server.js        # monta o app Express e conecta as rotas
+│   ├── produtos.js        # dados, busca e rotas de Produto
+│   ├── clientes.js         # dados, busca e rotas de Cliente
+│   ├── pedidos.js           # dados, cálculos, regras e rotas de Pedido
+│   ├── .eslintrc.json
+│   ├── .prettierrc
 │   └── package.json
-└── frontend/
-    ├── index.html
-    ├── style.css
-    └── script.js
+├── frontend/
+│   ├── index.html
+│   ├── style.css
+│   └── script.js
+└── GLOSSARIO.md
 ```
+
+## As 6 premissas aplicadas
+
+1. **Verificadores de estilo e formatadores** — ESLint com o guia de
+   estilo Airbnb (`eslint-config-airbnb-base`) integrado ao Prettier.
+2. **Nomes legíveis** — variáveis e funções com nomes que revelam seu
+   propósito (`novoProduto`, `dadosPedido`, `criarPedido`, etc.).
+3. **Sem números mágicos** — valores de desconto, frete e limites de
+   quantidade viraram constantes nomeadas, declaradas dentro das funções
+   que as usam.
+4. **Linguagem ubíqua** — vocabulário do domínio (Cliente, Produto,
+   Pedido, Status do Pedido...) padronizado em todo o sistema; ver
+   `GLOSSARIO.md`.
+5. **Funções coesas e desacopladas** — lógica dividida em funções
+   pequenas de responsabilidade única, e o próprio projeto dividido em
+   um arquivo por entidade (`produtos.js`, `clientes.js`, `pedidos.js`).
+6. **Fluxos de execução separados** — rotas com lógica relevante
+   envolvidas em `try/catch`, separando o tratamento de erros
+   inesperados do fluxo normal.
 
 ## Como rodar
 
 ### Back-end
+
 ```bash
 cd backend
 npm install
 npm start
 ```
-O servidor sobe em `http://localhost:3000`.
+
+Servidor em `http://localhost:3000`.
+
+Para checar estilo e formatação:
+
+```bash
+npx eslint . --fix
+npx prettier --write .
+```
 
 ### Front-end
-Basta abrir o arquivo `frontend/index.html` diretamente no navegador
-(ou servir a pasta com qualquer servidor estático). Ele consome a API
-em `http://localhost:3000`.
 
-## Funcionalidades
+Abra `frontend/index.html` no navegador (com o back-end já rodando), ou
+sirva por um servidor estático:
 
-- Listagem e cadastro de produtos
-- Listagem de clientes
-- Criação de pedidos com cálculo de desconto por quantidade, desconto de
-  cliente VIP e frete por cidade
-- Listagem de pedidos e transição de status (pendente → pago → enviado → entregue,
-  ou cancelado)
+```bash
+cd frontend
+npx serve .
+# ou
+python3 -m http.server 5500
+```
 
-## Proposta do exercício
+## Documentação
 
-O código funciona, mas foi escrito de propósito com vários problemas típicos
-de manutenção de software (os chamados "code smells"): métodos longos que
-fazem coisa demais, lógica de negócio misturada com as rotas HTTP, trechos de
-código duplicados, números e strings "mágicos" espalhados, nomes de variáveis
-pouco descritivos, condicionais aninhadas em excesso, uso de `var` e
-comparação com `==`, e falta de separação em camadas (rotas / regras de
-negócio / dados).
-
-Sua tarefa é analisar o back-end e o front-end, identificar esses pontos de
-baixa manutenibilidade e refatorá-los aplicando técnicas como:
-
-- Extract Method / Extract Function
-- Replace Magic Number/String with Named Constant
-- Remove Duplicated Code
-- Introduce Guard Clauses
-- Separar responsabilidades em camadas (ex.: controllers, services, repositories)
-- Melhorar nomes de variáveis e funções
-- Substituir cascatas de `if/else` por estruturas mais claras (ex.: mapas de
-  transição de estado, polimorfismo, tabelas de regras)
-
-Recomenda-se documentar, antes e depois, os smells encontrados e as técnicas
-aplicadas — isso costuma ser parte da entrega em trabalhos de manutenção de
-software.
+- `GLOSSARIO.md` — vocabulário do domínio (linguagem ubíqua).
