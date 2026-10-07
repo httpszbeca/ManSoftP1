@@ -15,28 +15,37 @@ sistema-pedidos/
 ├── frontend/
 │   ├── index.html
 │   ├── style.css
-│   └── script.js
-└── GLOSSARIO.md
+│   └── js/
+│       ├── main.js        # config + navegação entre abas
+│       ├── produtos.js
+│       ├── clientes.js
+│       └── pedidos.js
+├── GLOSSARIO.md
+└── relatorio-antes-depois.docx
 ```
 
-## As 6 premissas aplicadas
+## As 6 premissas aplicadas (back-end e front-end)
 
 1. **Verificadores de estilo e formatadores** — ESLint com o guia de
-   estilo Airbnb (`eslint-config-airbnb-base`) integrado ao Prettier.
+   estilo Airbnb (`eslint-config-airbnb-base`) integrado ao Prettier, no
+   back-end; `var`/`==` trocados por `const`/`let`/`===` no front-end.
 2. **Nomes legíveis** — variáveis e funções com nomes que revelam seu
-   propósito (`novoProduto`, `dadosPedido`, `criarPedido`, etc.).
+   propósito (`novoProduto`, `dadosPedido`, `criarPedido`,
+   `montarCardDeProduto`...).
 3. **Sem números mágicos** — valores de desconto, frete e limites de
-   quantidade viraram constantes nomeadas, declaradas dentro das funções
-   que as usam.
+   quantidade viraram constantes nomeadas no back-end, declaradas dentro
+   das funções que as usam (não há números mágicos de regra de negócio
+   no front-end).
 4. **Linguagem ubíqua** — vocabulário do domínio (Cliente, Produto,
-   Pedido, Status do Pedido...) padronizado em todo o sistema; ver
+   Pedido, Status do Pedido...) padronizado em back e front; ver
    `GLOSSARIO.md`.
 5. **Funções coesas e desacopladas** — lógica dividida em funções
-   pequenas de responsabilidade única, e o próprio projeto dividido em
-   um arquivo por entidade (`produtos.js`, `clientes.js`, `pedidos.js`).
-6. **Fluxos de execução separados** — rotas com lógica relevante
-   envolvidas em `try/catch`, separando o tratamento de erros
-   inesperados do fluxo normal.
+   pequenas de responsabilidade única (ex.: `calcularFrete`,
+   `montarCardDePedido`), e o próprio projeto dividido em um arquivo por
+   entidade, tanto no back-end quanto no front-end.
+6. **Fluxos de execução separados** — back-end com rotas envolvidas em
+   `try/catch`; front-end com chamadas `fetch` em `async/await` dentro
+   de `try/catch`, sempre registrando o erro em vez de ignorá-lo.
 
 ## Como rodar
 
@@ -59,15 +68,22 @@ npx prettier --write .
 
 ### Front-end
 
-Abra `frontend/index.html` no navegador (com o back-end já rodando), ou
-sirva por um servidor estático:
-
 ```bash
 cd frontend
 npx serve .
-# ou
-python3 -m http.server 5500
 ```
+
+## Rotas da API
+
+| Método | Rota | Descrição |
+|---|---|---|
+| GET | `/produtos` | Lista os produtos |
+| POST | `/produtos` | Cadastra um novo produto |
+| GET | `/clientes` | Lista os clientes |
+| POST | `/pedidos` | Cria um pedido (calcula desconto, frete e total) |
+| GET | `/pedidos` | Lista os pedidos |
+| GET | `/pedidos/:id` | Busca um pedido pelo id |
+| PUT | `/pedidos/:id/status` | Atualiza o status de um pedido |
 
 ## Documentação
 
